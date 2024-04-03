@@ -47,6 +47,7 @@ public:
     void setClosecallback(std::function<void()>);//设置回调函数
     void setErrorcallback(std::function<void()>);//设置回调函数
     void setWritecallback(std::function<void()>);//设置回调函数
+    void delFunc();//清空回调函数
 };
 
 

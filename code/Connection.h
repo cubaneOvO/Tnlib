@@ -24,6 +24,7 @@ private:
     Buffer inputbuffer_;//接收缓冲区
     Buffer outputbuffer_;//发生缓冲区
     std::atomic_bool disConnect;//如果为true则标志tcp连接已经断开
+    std::atomic_bool Alive_;
 
     std::function<void(spConnection)> closeCallback_;
     std::function<void(spConnection)> errorCallback_; 

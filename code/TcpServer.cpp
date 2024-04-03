@@ -11,7 +11,6 @@ acceptor_(mainloop_.get(), ip, port), threadpool_(threadnum_, "I/O"), sep_(sep)
     for(int i = 0; i < threadnum_; i++){
         subloops_.emplace_back(new EventLoop(false, timeval, timeout));//直接在vector中构造，避免了拷贝
         subloops_[i]->setepollTimeoutCallback(std::bind(&TcpServer::epollTimeout, this, std::placeholders::_1));
-        subloops_[i]->setclosetimeoutCB(std::bind(&TcpServer::closeTimeoutConnection, this, std::placeholders::_1));
         threadpool_.addtask(std::bind(&EventLoop::run, subloops_[i].get()));
     }
 }
@@ -85,13 +84,6 @@ void TcpServer::sendFinish(spConnection conn){
     if(epollTimeoutCB_)
         epollTimeoutCB_(loop);
  }
-
-void TcpServer::closeTimeoutConnection(int fd){
-    {//加锁再删除数据
-        std::lock_guard<std::mutex> lock(mutex_);
-        conns_.erase(fd);
-    }
-}
 
 void TcpServer::setnewConnectionCB(std::function<void(spConnection)> fn){
     newConnectionCB_ = fn;

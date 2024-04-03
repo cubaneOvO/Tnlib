@@ -45,7 +45,6 @@ public:
     void HandleMessage(spConnection, std::string&);//处理消息，在connection类中回调此函数
     void sendFinish(spConnection);//消息发送完毕，在connection类中回调此函数
     void epollTimeout(EventLoop*);//epoll_wait超时，在EventLoop类中回调此函数
-    void closeTimeoutConnection(int);
 
     //设置回调函数, 回调业务层的函数
     void setnewConnectionCB(std::function<void(spConnection)>);

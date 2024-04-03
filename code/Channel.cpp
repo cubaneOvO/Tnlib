@@ -75,16 +75,20 @@
 
     void Channel::handleEvent(){
         if(revents_ & EPOLLRDHUP){//表示对方已关闭链接，有些系统检测不到，
-            closecallback_();
+            if(closecallback_)
+            	closecallback_();
         }
         else if(revents_ & (EPOLLIN | EPOLLPRI)){
-            readcallback_();//调用回调函数
+            if(readcallback_)
+                readcallback_();//调用回调函数
         }
         else if(revents_ & EPOLLOUT){//有数据要写
-            writecallback_(); 
+            if(writecallback_)
+                writecallback_(); 
         }  
         else{
-            errorcallback_();
+            if(errorcallback_)
+                errorcallback_();
         }
     }
 
@@ -100,4 +104,11 @@
     }
     void Channel::setWritecallback(std::function<void()>fn){
         writecallback_ = fn;
+    }
+    
+    void Channel::delFunc(){
+    	readcallback_ = nullptr;
+    	closecallback_ = nullptr;
+    	errorcallback_ = nullptr;
+    	writecallback_ = nullptr;
     }

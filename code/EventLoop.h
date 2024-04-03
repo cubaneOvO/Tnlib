@@ -24,7 +24,6 @@ private:
     pid_t threadId_;//存储从事件循环线程的id，用于区从事件循环线程与Work线程
     bool IsMainLoop_;//用于区分主事件循环与从事件循环
     std::atomic_bool stop_;
-    std::function<void(int)> closetimeoutCB_;
 
     //任务队列，存放work线程处理后的发送任务，避免了两个不同线程共同处理发送时的竞争问题
     std::queue<std::function<void()>> taskqueue_;

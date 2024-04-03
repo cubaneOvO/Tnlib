@@ -2,7 +2,7 @@
 
 Connection::Connection(EventLoop* loop, std::unique_ptr<Socket> cilentSock, uint16_t sep)
 :loop_(loop), cilentSock_(std::move(cilentSock)), inputbuffer_(sep), outputbuffer_(sep),
-disConnect(false),connectChannel_(new Channel(loop_, cilentSock_->getFd()))
+disConnect(false),connectChannel_(new Channel(loop_, cilentSock_->getFd())), Alive_(true)
 {
     connectChannel_->setReadcallback(std::bind(&Connection::onMessage, this));
     connectChannel_->setClosecallback(std::bind(&Connection::closeCallback, this));
@@ -13,7 +13,7 @@ disConnect(false),connectChannel_(new Channel(loop_, cilentSock_->getFd()))
 }
 
 Connection::~Connection(){
-    
+    connectChannel_->delFunc();
 }
 
 int Connection::getFd() const{
@@ -29,14 +29,20 @@ uint16_t Connection::getPort()const{
 }
 
 void Connection::closeCallback(){//tcp连接关闭时的回调函数
-    disConnect = true;
-    connectChannel_->remove();//将channel从epoll红黑树上删除
-    closeCallback_(shared_from_this());
+    if(Alive_){
+    	disConnect = true;
+    	Alive_ = false;
+    	connectChannel_->remove();//将channel从epoll红黑树上删除
+    	closeCallback_(shared_from_this());
+    }
 }
 void Connection::errorCallback(){//tcp连接出错时的回调函数
-    disConnect = true;
-    connectChannel_->remove();//将channel从epoll红黑树上删除
-    errorCallback_(shared_from_this());// 关闭客户端的fd。
+    if(Alive_){
+    	disConnect = true;
+    	Alive_ = false;
+    	connectChannel_->remove();//将channel从epoll红黑树上删除
+    	errorCallback_(shared_from_this());// 关闭客户端的fd。
+    }
 }
 
 void Connection::setClosecallback(std::function<void(spConnection)>fn){
@@ -73,8 +79,9 @@ void Connection::onMessage(){//连接sock上有新数据
                     if(inputbuffer_.pickMessage(message) == false)
                         break;
                     lastTime_ = TimeStarmp::now();//更新时间戳
-
-                    messageCallback_(shared_from_this(), message);
+        	    auto p = shared_from_this();
+                    if(p)
+                        messageCallback_(p, message);
                 }
 
                 break;
@@ -111,7 +118,9 @@ void Connection::sendMessage(){
     
     if(outputbuffer_.size() == 0){//发送缓冲区中没数据了，数据传输完毕
         connectChannel_->disableWriting();//不再监听写事件
-        sendfinshCallback_(shared_from_this());
+        auto p = shared_from_this();
+        if(p)
+            sendfinshCallback_(p);
     }
 }
 

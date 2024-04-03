@@ -122,7 +122,3 @@ void EventLoop::newConnection(spConnection conn){
         conns_[conn->getFd()] = conn;
     }
 }
-
-void EventLoop::setclosetimeoutCB(std::function<void(int)> fn){
-    closetimeoutCB_ = fn;
-}
