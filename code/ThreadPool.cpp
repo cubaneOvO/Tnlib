@@ -16,7 +16,7 @@ ThreadPool::ThreadPool(size_t threadNum, const std::string threadtype):stop_(fal
                                 return ((this->stop_ == true) || (this->taskqueue_.empty() == false));
                             }
                         );
-                        if((this->stop_ == true) || (this->taskqueue_.empty() == true))//线程要退出并且无任务
+                        if((this->stop_ == true) && (this->taskqueue_.empty() == true))//线程要退出并且无任务
                             return;
                         task = std::move(this->taskqueue_.front());
                         this->taskqueue_.pop();
