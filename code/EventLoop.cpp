@@ -38,6 +38,11 @@ void EventLoop::run(){
             epollTimeoutCallback_(this);
         for(auto& ch: vec)
             ch->handleEvent();
+        while(closequeue_.size() > 0){
+            auto f = std::move(closequeue_.front());
+            closequeue_.pop();
+            f.first(f.second);
+        }
     }
 }
 
@@ -121,4 +126,8 @@ void EventLoop::newConnection(spConnection conn){
         std::lock_guard<std::mutex> lock(mapMutex_);
         conns_[conn->getFd()] = conn;
     }
+}
+
+void EventLoop::closequeueInLoop(std::function<void(spConnection)> fn, spConnection conn){
+    closequeue_.push({fn, conn});    
 }

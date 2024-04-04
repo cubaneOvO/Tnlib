@@ -57,7 +57,8 @@ int main(int argc, char *argv[])
         
         
         //正确性测试
-        printf("recv:%s\n",buf);
+        
+        //printf("recv:%s\n",buf);
         /*if(strcmp(buf, tmpbuf+4) != 0){
             printf("echo出错！\n");
             printf("%s\n%s\n", buf, tmpbuf+4);
@@ -66,6 +67,7 @@ int main(int argc, char *argv[])
 
          
     }
+    close(sockfd);
     printf("结束时间：%d\n",time(0));
     return 0;
 } 

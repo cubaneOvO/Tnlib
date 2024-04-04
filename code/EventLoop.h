@@ -41,6 +41,8 @@ private:
     //存放所有connection
     std::mutex mapMutex_;//给map加锁
     std::unordered_map<int, spConnection> conns_;
+    
+    std::queue<std::pair<std::function<void(spConnection)>, spConnection>> closequeue_;//关闭队列
 public:
     EventLoop(bool, int, int);
     ~EventLoop();
@@ -59,5 +61,7 @@ public:
     void handleTimeout();
     void newConnection(spConnection);//向unordered_map中加入元素
     void setclosetimeoutCB(std::function<void(int)>);
+        
+    void closequeueInLoop(std::function<void(spConnection)>, spConnection);//关闭连接入队函数
 };
 

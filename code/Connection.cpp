@@ -33,7 +33,8 @@ void Connection::closeCallback(){//tcp连接关闭时的回调函数
     	disConnect = true;
     	Alive_ = false;
     	connectChannel_->remove();//将channel从epoll红黑树上删除
-    	closeCallback_(shared_from_this());
+    	//closeCallback_(shared_from_this());
+    	loop_->closequeueInLoop(closeCallback_, shared_from_this());
     }
 }
 void Connection::errorCallback(){//tcp连接出错时的回调函数
@@ -41,7 +42,8 @@ void Connection::errorCallback(){//tcp连接出错时的回调函数
     	disConnect = true;
     	Alive_ = false;
     	connectChannel_->remove();//将channel从epoll红黑树上删除
-    	errorCallback_(shared_from_this());// 关闭客户端的fd。
+    	//errorCallback_(shared_from_this());// 关闭客户端的fd。
+    	loop_->closequeueInLoop(errorCallback_, shared_from_this());
     }
 }
 
