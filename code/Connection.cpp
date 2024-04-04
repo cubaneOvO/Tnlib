@@ -109,6 +109,7 @@ void Connection::send(std::string& message, size_t size){
 
 //注：若regSend与sendMessage不在同一线程中则有可能造成竞争
 void Connection::regSend(std::string message, size_t size){
+    if(disConnect) return;
     outputbuffer_.appendWithsep(message.data(), size);
     connectChannel_->enableWriting();//向epoll注册写事件
 }
