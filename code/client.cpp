@@ -66,6 +66,7 @@ int main(int argc, char *argv[])
 
          
     }
+    close(sockfd);
     printf("结束时间：%d\n",time(0));
     return 0;
 } 
