@@ -19,8 +19,8 @@ class Connection : public std::enable_shared_from_this<Connection>
 {
 private:
     EventLoop* loop_;//connect对应的事件循环，在构造函数中传入
-    std::unique_ptr<Socket> cilentSock_;//服务端用于监听的socket，在构造函数中传入(并由它来管理socket的生命周期)
-    std::unique_ptr<Channel> connectChannel_;//acceptor对应的channel，在构造函数中创建
+    std::unique_ptr<Socket> cilentSock_;//服务端用于通信的socket，在构造函数中传入(并由它来管理socket的生命周期)
+    std::unique_ptr<Channel> connectChannel_;//connection对应的channel，在构造函数中创建
     Buffer inputbuffer_;//接收缓冲区
     Buffer outputbuffer_;//发生缓冲区
     std::atomic_bool disConnect;//如果为true则标志tcp连接已经断开
