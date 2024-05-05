@@ -32,9 +32,9 @@ void Stop(int sig){//终止服务器程序
 
 int main(int argc, char const *argv[])
 {
-    if(argc != 3){
-        printf("GGG\n");
-        return -1;
+    if (argc != 3) {
+        fprintf(stderr, "Usage: %s <ip address> <port>\n", argv[0]);
+        exit(1);
     }
     signal(SIGINT, Stop);
     signal(SIGTERM, Stop);
